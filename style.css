@@ -1,0 +1,30 @@
+*{
+    background-color: aliceblue;
+    transition: 0.3s;
+}
+.nav-link{
+    margin-right: 5px;
+    margin-left: 5px;
+    font-size: 120%;
+    background: transparent;
+}
+.active{
+    font-weight: 600;
+}
+.navbar img{
+    width: 70%;
+}
+.fa{
+    background: transparent;
+}
+.nav-item{
+    margin-right: 5px;
+    margin-left: 5px;
+    border-radius: 20px;
+}
+.l{
+    margin-right: 20px;
+}
+.nav-item:hover{
+    background-color: #E99815;
+}
