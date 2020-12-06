@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static',filename= 'kdbanklogo.png')}}">
+
+    <title>KD Online Banking</title>
+    
+    <!-- Bootstarp CDNs -->
+    <link rel="stylesheet" href="{{ url_for('static',filename= 'bootstrap.min.css')}}">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <!-- External Style Sheet -->
+    <link rel='stylesheet' href="{{ url_for('static',filename= 'main.css')}}">
+    <link rel='stylesheet' href="{{ url_for('static',filename= 'loader.css')}}">
+
+</head>
+<body>
+    <div class="wrapper">
+        <div class="loader">
+            <div class="inner_loader"></div>
+            <div class="inner_loader"></div>
+            <div class="inner_loader"></div>
+            <div class="inner_loader"></div>
+            <div class="inner_loader"></div>
+            <br><br><h3>Loading</h3>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <nav class='navbar navbar-expand-lg navbar-light' style="padding: 0; padding-top: 5px;">
+                <div class='container-fluid'>
+                    <a class="navbar-brand" href="http://localhost:5000/" style="padding: 0; margin: 0;">
+                        <img src="{{ url_for('static',filename= 'kdbank.png')}}" alt="" style="padding: 0; margin: 0;">
+                    </a>
+                    <button class='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarSupportedContent' aria-controls='navbarSupportedContent' aria-expanded='false' aria-label='Toggle navigation'>
+                    <span class='navbar-toggler-icon'></span>
+                    </button>
+                    <div class='collapse navbar-collapse' id='navbarSupportedContent'>
+                        <ul class='navbar-nav ml-auto mb-2 mb-lg-0'>
+                            <li class='nav-item'>
+                            <a class='nav-link' aria-current='page' href='http://localhost:5000/'>Home</a>
+                            </li>
+                            <li class='nav-item active l'>
+                            <a class='nav-link' href='http://localhost:5000/banking'>Customers <i class="fa fa-user" aria-hidden="true"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <div id="trans-bg">
+        <div class="row">
+            <div id="trans-box">
+                <h1 class="transfertitle">Transactions</h1>
+                <button onclick="closebtn()" class="loginclse"><i class="fa fa-close"></i></button>
+                <hr>
+                {% for i in trans_db %}
+                Transferred &#8377; {{i[2]}} to {{i[1]}} (Acc. No: {{i[0]}}) at {{i[3]}} IST
+                <hr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="transfer-bg">
+        <div class="row">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+            <div id="transfer-box">
+                <h1 class="transfertitle">Transfer</h1>
+                <button onclick="closebtn()" class="loginclse"><i class="fa fa-close"></i></button>
+                <hr>
+                <form method="POST">
+                    <label for="acc_no" class="formtxt">Acc. No: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" id="acc_no" name="acc_no" placeholder="KDBXXXXXXXXX" class="forminput" required><br>
+                    <label for="name" class="formtxt">Name: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                    <input type="text" id="name" name="name" placeholder="Manoah D" class="forminput" required><br>
+                    <label for="amt" class="formtxt">Amount: &nbsp;&nbsp;&nbsp;&#8377;</label>
+                    <input type="number" id="amt" name="amt" placeholder="1000" class="forminput" required><br>
+                    <!-- <button onclick="confirm()" id="before_confirm" class="btn btn-success btn1">Transfer</button>
+                    <div id="confirm"> -->
+                        <input onclick="closebtn()" type="submit" name="button" class="btn btn-success btn1" value="Transfer">
+                        <!-- <input onclick="closebtn()" type="submit" name="button" class="btn btn-danger btn1" value="Cancel">
+                    </div> -->
+                </form>
+            </div>
+            <div class="col-lg-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row row1">
+            <div class="col-lg-12">
+                <div class="boxspl"><h3>Welcome Mr. {{cust_db[0][1]}}. Your Current Balance is &#8377; {{cust_db[0][2]}}. <button onclick="transaction()" class="btn btn-secondary">Transactions</button></h3></div>
+            </div>
+            <div class="col-lg-12">
+                <h2>Customers List</h2>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[1][1]}}</h4>
+                <p>Acc. No: {{cust_db[1][0]}}</p>
+                <button onclick="showbal1()" class="btn btn-primary balance" id="bal{{cust_db[1][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal1(){
+                        if (document.getElementById('bal{{cust_db[1][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[1][1]}}').innerHTML='&#8377; '+'{{cust_db[1][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[1][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[2][1]}}</h4>
+                <p>Acc. No: {{cust_db[2][0]}}</p>
+                <button onclick="showbal2()" class="btn btn-primary balance" id="bal{{cust_db[2][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal2(){
+                        if (document.getElementById('bal{{cust_db[2][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[2][1]}}').innerHTML='&#8377; '+'{{cust_db[2][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[2][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[3][1]}}</h4>
+                <p>Acc. No: {{cust_db[3][0]}}</p>
+                <button onclick="showbal3()" class="btn btn-primary balance" id="bal{{cust_db[3][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal3(){
+                        if (document.getElementById('bal{{cust_db[3][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[3][1]}}').innerHTML='&#8377; '+'{{cust_db[3][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[3][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[4][1]}}</h4>
+                <p>Acc. No: {{cust_db[4][0]}}</p>
+                <button onclick="showbal4()" class="btn btn-primary balance" id="bal{{cust_db[4][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal4(){
+                        if (document.getElementById('bal{{cust_db[4][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[4][1]}}').innerHTML='&#8377; '+'{{cust_db[4][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[4][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[5][1]}}</h4>
+                <p>Acc. No: {{cust_db[5][0]}}</p>
+                <button onclick="showbal5()" class="btn btn-primary balance" id="bal{{cust_db[5][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal5(){
+                        if (document.getElementById('bal{{cust_db[5][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[5][1]}}').innerHTML='&#8377; '+'{{cust_db[5][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[5][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[6][1]}}</h4>
+                <p>Acc. No: {{cust_db[6][0]}}</p>
+                <button onclick="showbal6()" class="btn btn-primary balance" id="bal{{cust_db[6][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal6(){
+                        if (document.getElementById('bal{{cust_db[6][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[6][1]}}').innerHTML='&#8377; '+'{{cust_db[6][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[6][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[7][1]}}</h4>
+                <p>Acc. No: {{cust_db[7][0]}}</p>
+                <button onclick="showbal7()" class="btn btn-primary balance" id="bal{{cust_db[7][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal7(){
+                        if (document.getElementById('bal{{cust_db[7][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[7][1]}}').innerHTML='&#8377; '+'{{cust_db[7][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[7][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[8][1]}}</h4>
+                <p>Acc. No: {{cust_db[8][0]}}</p>
+                <button onclick="showbal8()" class="btn btn-primary balance" id="bal{{cust_db[8][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal8(){
+                        if (document.getElementById('bal{{cust_db[8][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[8][1]}}').innerHTML='&#8377; '+'{{cust_db[8][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[8][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[9][1]}}</h4>
+                <p>Acc. No: {{cust_db[9][0]}}</p>
+                <button onclick="showbal9()" class="btn btn-primary balance" id="bal{{cust_db[9][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal9(){
+                        if (document.getElementById('bal{{cust_db[9][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[9][1]}}').innerHTML='&#8377; '+'{{cust_db[9][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[9][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="box">
+                <h4>{{cust_db[10][1]}}</h4>
+                <p>Acc. No: {{cust_db[10][0]}}</p>
+                <button onclick="showbal10()" class="btn btn-primary balance" id="bal{{cust_db[10][1]}}">Show Balance</button>
+                </div>
+                <script>
+                    function showbal10(){
+                        if (document.getElementById('bal{{cust_db[10][1]}}').innerHTML=='Show Balance'){
+                            document.getElementById('bal{{cust_db[10][1]}}').innerHTML='&#8377; '+'{{cust_db[10][2]}}';
+                        }
+                        else{
+                            document.getElementById('bal{{cust_db[10][1]}}').innerHTML='Show Balance';
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+    <script>
+        function transaction(){
+            document.getElementById("trans-bg").style.zIndex='100';
+            document.getElementById("trans-box").style.zIndex='150';
+        }
+        // function confirm(){
+        //     document.getElementById('before_confirm').style.display='none';
+        //     document.getElementById('confirm').style.display='initial';
+        // }
+        function closebtn(){
+            document.getElementById("transfer-bg").style.zIndex='-100';
+            document.getElementById("transfer-box").style.zIndex='-150';
+            document.getElementById("trans-bg").style.zIndex='-100';
+            document.getElementById("trans-box").style.zIndex='-150';
+            // document.getElementById('before_confirm').style.display='initial';
+            // document.getElementById('confirm').style.display='none';
+            // document.getElementById('acc_no').value = '';
+            // document.getElementById('name').value = '';
+            // document.getElementById('amt').value = '';
+        }
+        function transfer(){
+            document.getElementById("transfer-bg").style.zIndex='100';
+            document.getElementById("transfer-box").style.zIndex='150';
+        }
+    </script>
+
+    <h3 onclick="transfer()" class="transfer">Transfer <i class="fa fa-exchange" aria-hidden="true"></i></h3>
+    
+    <code>This project was done by <a href="https://kd100100.github.io/">Keerthivasan D</a> for <a href="https://www.linkedin.com/company/the-sparks-foundation/">The Sparks Foundation</a> Internship</code>
+    
+    <script>
+        $(window).on("load",function(){
+            $(".wrapper").fadeOut('slow');
+        })
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+</body>
+</html>
